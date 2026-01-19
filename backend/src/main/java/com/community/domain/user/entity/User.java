@@ -1,6 +1,7 @@
 package com.community.domain.user.entity;
 
 import com.community.core.common.entity.BaseAuditableEntity;
+import com.community.core.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @SQLRestriction("delete_at IS NULL")
-public class User extends BaseAuditableEntity {
+public class User extends BaseEntity {
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -85,9 +86,18 @@ public class User extends BaseAuditableEntity {
     }
 
     // -------비즈니스 메서드-------
+
+    /**
+     * 로그인 시각 업데이트
+     */
     public void updateLastLoginAt() {
         this.lastLoginAt = LocalDateTime.now();
     }
+
+    /**
+     * 닉네임 변경 (30일에 1회)
+     * @param nickname 30일에 1회
+     */
     public void updateNickname(String nickname){
         if(this.nicknameChangedAt != null && this. nicknameChangedAt.plusDays(30).isAfter(LocalDateTime.now())){
             throw new IllegalStateException("닉네임은 30일에 한 번만 변경 할 수 있습니다.");
@@ -95,27 +105,57 @@ public class User extends BaseAuditableEntity {
         this.nickname = nickname;
         this.nicknameChangedAt = LocalDateTime.now();
     }
+
+    /**
+     * 프로필 이미지 변경
+     * @param profileImage 프로필 이미지
+     */
     public void updateProfileImage(String profileImage){
         this.profileImage = profileImage;
     }
+
+    /**
+     * 비밀 번호 업데이트
+     * @param encodedPassword 암호화
+     */
     public void updatePassword(String encodedPassword){
         this.password = encodedPassword;
     }
+
+    /**
+     * 이메일 인증 완료
+     */
     public void verifyEmail(){
         this.emailVerified = true;
     }
+
+    /**
+     * 탈퇴처리 소프트
+     */
     public void delete() {
         this.deletedAt = LocalDateTime.now();
     }
 
+    /**
+     * 삭제 여부
+     * @return 삭제여부 확인
+     */
     public boolean isDeleted() {
         return this.deletedAt != null;
     }
 
+    /**
+     * 관리자 여부
+     * @return ROLE.ADMIN
+     */
     public boolean isAdmin() {
         return this.role == Role.ADMIN;
     }
 
+    /**
+     * OAuth2 사용자 여부
+     * @return Password
+     */
     public boolean isOAuthUser() {
         return this.password == null;
     }
