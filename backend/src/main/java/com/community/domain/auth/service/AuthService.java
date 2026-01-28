@@ -26,6 +26,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
     private final JwtProperties jwtProperties;
+    private final RefreshTokenService refreshTokenService;
 
     /**
      * 로그인
@@ -42,8 +43,10 @@ public class AuthService {
         if(!passwordEncoder.matches(request.getPassword(), user.getPassword())){
             throw new UnauthorizedException(ErrorCode.LOGIN_FAILED);
         }
-
+        // 마지막 로그인 시간 업데이트
         user.updateLastLoginAt();
+
+        // 토큰 생성
         String accessToken = jwtProvider.createAccessToken(
                 user.getId(),
                 user.getEmail(),
@@ -51,6 +54,9 @@ public class AuthService {
         );
 
         String refreshToken = jwtProvider.createRefreshToken(user.getId());
+
+        //  Refresh Token을 Redis에 저장
+        refreshTokenService.saveRefreshToken(user.getId(), refreshToken);
 
         log.info("[AUTH] 로그인 성공: userId={}, email={}", user.getId(), user.getEmail());
 
@@ -77,6 +83,11 @@ public class AuthService {
         //refresh Token 에서 사용자 ID 추출
         Long userId = jwtProvider.getUserIdFromToken(refreshToken);
 
+        // Redis에 저장된 RefreshToken과 비교
+        if (!refreshTokenService.validateRefreshToken(userId, refreshToken)) {
+            throw new UnauthorizedException(ErrorCode.INVALID_REFRESH_TOKEN);
+        }
+
         //사용자 조회
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UnauthorizedException(ErrorCode.INVALID_REFRESH_TOKEN));
@@ -88,6 +99,10 @@ public class AuthService {
         );
 
         String newRefreshToken = jwtProvider.createRefreshToken(user.getId());
+
+        // 새 RefreshToken 저장
+        refreshTokenService.saveRefreshToken(user.getId(), newRefreshToken);
+
         log.info("[AUTH] 토큰 갱신 성공: userId={}", user.getId());
 
         return TokenResponse.of(
@@ -95,6 +110,14 @@ public class AuthService {
                 newRefreshToken,
                 jwtProperties.getAccessTokenValidity()
         );
+    }
 
+    /**
+     * 로그아웃
+     * @param user 로그아웃 사용자
+     */
+    public void logout(User user){
+        refreshTokenService.deleteRefreshToken(user.getId());
+        log.info("[AUTH] 로그아웃 성공: userId={}", user.getId());
     }
 }

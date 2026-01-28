@@ -33,9 +33,12 @@ public enum ErrorCode {
     FORBIDDEN_NICKNAME(400, "U007", "사용할 수 없는 닉네임입니다."),
 
     // ========== Board (B) ==========
-    BOARD_NOT_FOUND(404, "B001", "게시판을 찾을 수 없습니다. (Slug: %s)"),
+    BOARD_NOT_FOUND(404, "B001", "게시판을 찾을 수 없습니다."),
     BOARD_NOT_ACTIVE(400, "B002", "비활성화된 게시판입니다."),
     WRITE_NOT_ALLOWED(403, "B003", "글쓰기 권한이 없습니다."),
+    DUPLICATE_BOARD_SLUG(409, "B004", "이미 사용 중인 슬러그입니다."),
+    ADMIN_ONLY(403, "B005", "관리자만 접근할 수 있습니다."),
+    BOARD_HAS_POSTS(400, "B006", "게시글이 있는 게시판은 삭제할 수 없습니다."),
 
     // ========== Post (P) ==========
     POST_NOT_FOUND(404, "P001", "게시글을 찾을 수 없습니다. (ID: %s)"),
@@ -45,6 +48,8 @@ public enum ErrorCode {
     PRICE_REQUIRED(400, "P005", "가격을 입력해야 합니다."),
     TOO_MANY_IMAGES(400, "P006", "이미지는 최대 %d개까지 첨부할 수 있습니다."),
     TOO_MANY_TAGS(400, "P007", "태그는 최대 %d개까지 추가할 수 있습니다."),
+
+
 
     // ========== Comment (CM) ==========
     COMMENT_NOT_FOUND(404, "CM001", "댓글을 찾을 수 없습니다. (ID: %s)"),

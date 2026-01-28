@@ -2,6 +2,7 @@ package com.community.core.security.oauth2;
 
 import com.community.core.security.jwt.JwtProperties;
 import com.community.core.security.jwt.JwtProvider;
+import com.community.domain.auth.service.RefreshTokenService;
 import com.community.domain.user.entity.User;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -23,12 +24,22 @@ import java.io.IOException;
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final JwtProvider jwtProvider;
     private final JwtProperties jwtProperties;
+    private final RefreshTokenService refreshTokenService;
 
     @Value("${app.oauth2.redirect-url:http://localhost:3000/oauth2/callback}")
     private String redirectUrl;
 
+    /**
+     *  OAuth2 인증 성공 처리
+     * @param request  request
+     * @param response response
+     * @param authentication authentication
+     * @throws IOException  IOException
+     * @throws ServletException ServletException
+     */
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+
         // PrincipalUser에서 User 정보 추출
         PrincipalUser principalUser = (PrincipalUser) authentication.getPrincipal();
         User user = principalUser.getUser();
@@ -42,6 +53,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         );
 
         String refreshToken = jwtProvider.createRefreshToken(user.getId());
+
+        // Refresh Token을 Redis에 저장
+        refreshTokenService.saveRefreshToken(user.getId(), refreshToken);
 
         // 프론트로 리다이렉트
         String targetUrl = UriComponentsBuilder.fromUriString(redirectUrl)

@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @SQLRestriction("delete_at IS NULL")
-public class User extends BaseEntity {
+public class User extends BaseAuditableEntity {
 
     @Column(nullable = false, unique = true)
     private String email;
