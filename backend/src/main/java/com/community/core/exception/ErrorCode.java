@@ -53,12 +53,15 @@ public enum ErrorCode {
 
     // ========== Comment (CM) ==========
     COMMENT_NOT_FOUND(404, "CM001", "댓글을 찾을 수 없습니다. (ID: %s)"),
-    NOT_COMMENT_AUTHOR(403, "CM002", "댓글 작성자만 수정/삭제할 수 있습니다."),
-    INVALID_COMMENT_DEPTH(400, "CM003", "대댓글에는 답글을 달 수 없습니다."),
-    ALREADY_SELECTED(400, "CM004", "이미 채택된 답변이 있습니다."),
-    CANNOT_SELECT_OWN(400, "CM005", "본인의 댓글은 채택할 수 없습니다."),
-    ONLY_AUTHOR_CAN_SELECT(403, "CM006", "게시글 작성자만 채택할 수 있습니다."),
-
+    COMMENT_ALREADY_DELETED(400, "CM002", "이미 삭제된 댓글입니다."),
+    NOT_COMMENT_AUTHOR(403, "CM003", "댓글 작성자만 수정/삭제할 수 있습니다."),
+    INVALID_COMMENT_DEPTH(400, "CM004", "대댓글에는 답글을 달 수 없습니다."),
+    ALREADY_SELECTED(400, "CM005", "이미 채택된 답변이 있습니다."),
+    CANNOT_SELECT_OWN(400, "CM006", "본인의 댓글은 채택할 수 없습니다."),
+    ONLY_AUTHOR_CAN_SELECT(403, "CM007", "게시글 작성자만 채택할 수 있습니다."),
+    COMMENT_NOT_SELECTED(400, "CM008", "채택되지 않은 댓글입니다."),
+    INVALID_PARENT_COMMENT(400, "CM009", "유효하지 않은 부모 댓글입니다."),
+    ONLY_QNA_CAN_SELECT(400, "CM010", "QnA 게시판에서만 채택할 수 있습니다."),
     // ========== Reaction (R) ==========
     CANNOT_REACT_OWN(400, "R001", "본인의 글/댓글에는 반응할 수 없습니다."),
 

@@ -256,4 +256,51 @@ public class Post extends BaseAuditableEntity {
         tags.forEach(this::addTag);
     }
 
+    // ========== QnA 채택 관련 메서드 ==========
+
+    /**
+     * 채택된 댓글 ID 조회 (QnA)
+     */
+    public Long getSelectedCommentId() {
+        if (extraFields == null) {
+            return null;
+        }
+        Object value = extraFields.get("selectedCommentId");
+        if (value instanceof Number) {
+            return ((Number) value).longValue();
+        }
+        return null;
+    }
+
+    /**
+     * 채택된 댓글 존재 여부 (QnA)
+     */
+    public boolean hasSelectedComment() {
+        return getSelectedCommentId() != null;
+    }
+
+    /**
+     * 댓글 채택 (QnA)
+     */
+    public void selectComment(Long commentId) {
+        if (hasSelectedComment()) {
+            throw new IllegalStateException("이미 채택된 댓글이 있습니다.");
+        }
+        if (extraFields == null) {
+            extraFields = new HashMap<>();
+        }
+        extraFields.put("selectedCommentId", commentId);
+        extraFields.put("selectedAt", LocalDateTime.now().toString());
+    }
+
+    /**
+     * 댓글 채택 취소 (QnA)
+     */
+    public void unselectComment() {
+        if (extraFields != null) {
+            extraFields.remove("selectedCommentId");
+            extraFields.remove("selectedAt");
+        }
+    }
+
 }
