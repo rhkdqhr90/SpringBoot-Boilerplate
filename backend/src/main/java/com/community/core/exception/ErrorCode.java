@@ -49,8 +49,6 @@ public enum ErrorCode {
     TOO_MANY_IMAGES(400, "P006", "이미지는 최대 %d개까지 첨부할 수 있습니다."),
     TOO_MANY_TAGS(400, "P007", "태그는 최대 %d개까지 추가할 수 있습니다."),
 
-
-
     // ========== Comment (CM) ==========
     COMMENT_NOT_FOUND(404, "CM001", "댓글을 찾을 수 없습니다. (ID: %s)"),
     COMMENT_ALREADY_DELETED(400, "CM002", "이미 삭제된 댓글입니다."),
@@ -67,6 +65,8 @@ public enum ErrorCode {
     CANNOT_REACT_OWN_CONTENT(403, "RC001", "본인의 글/댓글에는 반응할 수 없습니다."),
     TARGET_ALREADY_DELETED(400, "RC002", "삭제된 글/댓글에는 반응할 수 없습니다."),
     REACTION_NOT_FOUND(404, "RC003", "반응을 찾을 수 없습니다."),
+    //=========== Bookmark =============
+    BOOKMARK_NOT_FOUND(404, "BK001", "북마크를 찾을 수 없습니다."),
 
     // ========== File (F) ==========
     FILE_NOT_FOUND(404, "F001", "파일을 찾을 수 없습니다."),
